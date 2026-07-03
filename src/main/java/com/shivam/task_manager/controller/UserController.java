@@ -25,4 +25,10 @@ public class UserController {
         userService.signUpUser(userDTO);
         return ResponseHandler.handleResponse(HttpStatus.CREATED, "Sign up successful.", null);
     }
+
+    @PostMapping("/signin")
+    ResponseEntity<Object> signInUser(@RequestBody UserDTO userDTO) {
+        String jwt = userService.signInUser(userDTO);
+        return ResponseHandler.handleResponse(HttpStatus.OK, "Sign in successful.", jwt);
+    }
 }
