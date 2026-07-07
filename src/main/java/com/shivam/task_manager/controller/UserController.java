@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/users")
@@ -28,7 +30,7 @@ public class UserController {
 
     @PostMapping("/signin")
     ResponseEntity<Object> signInUser(@RequestBody UserDTO userDTO) {
-        String jwt = userService.signInUser(userDTO);
-        return ResponseHandler.handleResponse(HttpStatus.OK, "Sign in successful.", jwt);
+        Map<String, String> singInResponseMap = userService.signInUser(userDTO);
+        return ResponseHandler.handleResponse(HttpStatus.OK, "Sign in successful.", singInResponseMap);
     }
 }
