@@ -14,7 +14,6 @@ public class TaskDTO {
 //    @NotBlank(message = "Task description cannot be empty.")
     private String description;
 
-    @JsonProperty("isCompleted")
     private Boolean isCompleted;
 
 //    @NotNull(message = "User not found.")

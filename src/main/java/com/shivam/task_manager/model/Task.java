@@ -1,6 +1,6 @@
 package com.shivam.task_manager.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -23,8 +23,7 @@ public class Task {
     @NotBlank(message = "Task description cannot be empty.")
     private String description;
 
-    @JsonProperty("isCompleted")
-    private boolean isCompleted;
+    private Boolean isCompleted;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
@@ -34,6 +33,7 @@ public class Task {
 
     )
     @NotNull(message = "User should not be null.")
+    @JsonIgnore
     private Users user;
 
 }

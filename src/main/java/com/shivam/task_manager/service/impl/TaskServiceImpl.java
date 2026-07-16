@@ -30,7 +30,7 @@ public class TaskServiceImpl implements TaskService {
         // Creates a lazy proxy reference without executing a SQL SELECT query
         Users userProxy = entityManager.getReference(Users.class, taskDTO.getUserId());
         Task task = new Task();
-        task.setCompleted(false);
+        task.setIsCompleted(false);
         task.setDescription(taskDTO.getDescription());
         task.setUser(userProxy);
 
@@ -46,7 +46,7 @@ public class TaskServiceImpl implements TaskService {
         if (taskDTO.getDescription() != null)
             task.setDescription(taskDTO.getDescription());
         if (taskDTO.getIsCompleted() != null)
-            task.setCompleted(taskDTO.getIsCompleted());
+            task.setIsCompleted(taskDTO.getIsCompleted());
 
         return task;
     }

@@ -1,5 +1,7 @@
 package com.shivam.task_manager.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -11,6 +13,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Users {
 
     @Id
@@ -20,5 +23,7 @@ public class Users {
 
     @Column(unique = true, nullable = false)
     private String username;
+
+    @JsonIgnore
     private String password;
 }
