@@ -3,9 +3,9 @@ spring:
     name: task-manager
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/task_manager?useSSL=false
-    username: postgres
-    password: mysecretpassword
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:task_manager}?useSSL=false
+    username: ${DB_USER:postgres}
+    password: ${DB_PASSWORD:mysecretpassword}
 
   # The SQL dialect makes Hibernate generate better SQL for the chosen database
   jpa:
@@ -15,4 +15,4 @@ spring:
 
   #JPA Settings
     hibernate:
-      ddl_auto: update
+      ddl-auto: update
