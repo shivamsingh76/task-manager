@@ -30,7 +30,7 @@ services:
 
   task-manager-service:
 
-    image: task-manager:v1.1
+    image: shivamsingh07/task-manager-service:v1.1
 
     container_name: task-manager-service
 
@@ -54,7 +54,7 @@ services:
 
   task-manager-ui:
 
-    image: task-manager-ui:v1.2
+    image: shivamsingh07/task-manager-ui:v1.2
 
     container_name: task-manager-ui
 
