@@ -1,62 +1,85 @@
 # Task Manager API
 
-A secure Task Manager REST API built with **Spring Boot**, **Spring Security**, **JWT Authentication**, **PostgreSQL**, and **Docker**.
+A secure RESTful Task Manager backend built with **Spring Boot**, **Spring Security**, **JWT Authentication**, and **PostgreSQL**.
 
-The application allows users to register, authenticate using JWT, and perform CRUD operations on their tasks.
+This application provides secure APIs for user authentication and task management. It is designed to work with the Angular frontend available in the companion repository.
 
 ---
 
 ## Features
 
+### Authentication
+
 - User Registration
-- User Login with JWT Authentication
-- Secure REST APIs using Spring Security
-- CRUD Operations for Tasks
+- User Login
+- JWT Authentication
+- BCrypt Password Encryption
+- Stateless Authentication using Spring Security
+
+### Task Management
+
+- Create Task
+- Update Task
+- Delete Task
+- Get All Tasks
+- Get Task by Id
+- Mark Task as Completed
+- Task Ownership Validation
+
+### Backend Features
+
+- Spring Boot REST APIs
+- Spring Data JPA
 - PostgreSQL Database
-- Input Validation
+- DTO based Request/Response
 - Global Exception Handling
+- Bean Validation
 - Docker Support
 - Docker Compose Support
 
 ---
 
-## Tech Stack
+# Tech Stack
 
 | Technology | Version |
 |------------|---------|
 | Java | 21 |
-| Spring Boot | 4.1.0 |
+| Spring Boot | 4.1 |
 | Spring Security | 7 |
 | Spring Data JPA | Latest |
 | PostgreSQL | 17+ |
-| JWT (jjwt) | 0.13.0 |
+| JWT (jjwt) | 0.13 |
 | Maven | 3.9+ |
 | Docker | Latest |
 | Docker Compose | Latest |
 
 ---
 
-## Project Structure
+# Project Structure
 
 ```
 task-manager
 │
 ├── src
 │   ├── main
-│   │   ├── java/com/shivam/task_manager
-│   │   │   ├── config
-│   │   │   ├── controller
-│   │   │   ├── dto
-│   │   │   ├── exception
-│   │   │   ├── filter
-│   │   │   ├── model
-│   │   │   ├── repository
-│   │   │   ├── response
-│   │   │   └── service
-│   │   └── resources
-│   │       └── application.yaml
 │   │
-│   └── test
+│   ├── java
+│   │   └── com.shivam.task_manager
+│   │       ├── config
+│   │       ├── controller
+│   │       ├── dto
+│   │       ├── exception
+│   │       ├── filter
+│   │       ├── mapper
+│   │       ├── model
+│   │       ├── repository
+│   │       ├── response
+│   │       ├── security
+│   │       ├── service
+│   │       └── util
+│   │
+│   └── resources
+│       └── application.yaml
 │
 ├── Dockerfile
 ├── docker-compose.yaml
@@ -66,48 +89,76 @@ task-manager
 
 ---
 
-## Architecture
+# Architecture
 
 ```
-Browser / Postman
-        │
-        ▼
-Spring Boot REST API
-        │
- Spring Security + JWT
-        │
-        ▼
-Spring Data JPA
-        │
-        ▼
- PostgreSQL
+                Angular UI
+                     │
+                     ▼
+             Spring Boot REST API
+                     │
+      Spring Security + JWT Filter
+                     │
+                     ▼
+              Spring Data JPA
+                     │
+                     ▼
+                PostgreSQL
 ```
 
 ---
 
-## REST APIs
+# Authentication Flow
 
-### Authentication
-
-| Method | Endpoint | Description |
-|---------|----------|-------------|
-| POST | `/api/v1/users/signup` | Register new user |
-| POST | `/api/v1/users/signin` | Login user |
+```
+User
+ │
+ │ Login
+ ▼
+Spring Boot
+ │
+ │ Validate Credentials
+ ▼
+Generate JWT
+ │
+ ▼
+Client stores JWT
+ │
+ ▼
+Authorization: Bearer <TOKEN>
+ │
+ ▼
+Protected APIs
+```
 
 ---
 
-### Tasks
+# API Endpoints
+
+## Authentication APIs
 
 | Method | Endpoint | Description |
 |---------|----------|-------------|
-| GET | `/api/v1/tasks/{userId}` | Get all tasks |
+| POST | `/api/v1/users/signup` | Register a new user |
+| POST | `/api/v1/users/signin` | Login and receive JWT |
+
+---
+
+## Task APIs
+
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| GET | `/api/v1/tasks` | Get all tasks |
+| GET | `/api/v1/tasks/{id}` | Get task by id |
 | POST | `/api/v1/tasks` | Create task |
-| PATCH | `/api/v1/tasks/{taskId}` | Update task |
-| DELETE | `/api/v1/tasks/{taskId}` | Delete task |
+| PATCH | `/api/v1/tasks/{id}` | Update task |
+| DELETE | `/api/v1/tasks/{id}` | Delete task |
+
+> **Note:** All Task APIs require a valid JWT token.
 
 ---
 
-## Clone Repository
+# Clone Repository
 
 ```bash
 git clone https://github.com/shivamsingh76/task-manager.git
@@ -139,9 +190,17 @@ CREATE DATABASE task_manager;
 
 The application reads configuration from environment variables.
 
-Example:
+| Variable | Default Value |
+|----------|---------------|
+| DB_HOST | localhost |
+| DB_PORT | 5432 |
+| DB_NAME | task_manager |
+| DB_USER | postgres |
+| DB_PASSWORD | mysecretpassword |
 
-```text
+Example
+
+```bash
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=task_manager
@@ -149,11 +208,11 @@ DB_USER=postgres
 DB_PASSWORD=mysecretpassword
 ```
 
-If these variables are not provided, default values defined in `application.yaml` are used.
-
 ---
 
 ## Build
+
+Linux / macOS
 
 ```bash
 ./mvnw clean package
@@ -173,7 +232,7 @@ mvnw.cmd clean package
 java -jar target/task-manager-0.0.1-SNAPSHOT.jar
 ```
 
-Application starts at
+Application will start on
 
 ```
 http://localhost:8080
@@ -181,7 +240,7 @@ http://localhost:8080
 
 ---
 
-# Running with Docker
+# Running using Docker
 
 ## Build Image
 
@@ -193,39 +252,34 @@ docker build -t task-manager:v1.0 .
 
 ## Run Container
 
+If PostgreSQL is running on your host machine:
+
 ```bash
-docker run \
+docker run -d \
 -p 8080:8080 \
 -e DB_HOST=host.docker.internal \
 -e DB_PORT=5432 \
 -e DB_NAME=task_manager \
 -e DB_USER=postgres \
 -e DB_PASSWORD=mysecretpassword \
+--name task-manager-service \
 task-manager:v1.0
 ```
 
-If PostgreSQL is running inside another Docker container, replace
-
-```
-host.docker.internal
-```
-
-with the PostgreSQL container name.
+If PostgreSQL is running inside Docker, use the PostgreSQL container name instead of `host.docker.internal`.
 
 ---
 
-# Running with Docker Compose
+# Running using Docker Compose
 
-The project includes a `docker-compose.yaml` that starts
+The repository contains a ready-to-use `docker-compose.yaml`.
+
+It starts:
 
 - PostgreSQL
-- Spring Boot Application
+- Spring Boot Backend
 
-If you are also using the Angular frontend, Docker Compose can be extended to start the frontend container as well.
-
----
-
-## Start
+To start all services
 
 ```bash
 docker compose up --build
@@ -237,15 +291,13 @@ Run in detached mode
 docker compose up -d --build
 ```
 
----
-
-## Stop
+Stop containers
 
 ```bash
 docker compose down
 ```
 
-Remove database volume
+Remove containers and database volume
 
 ```bash
 docker compose down -v
@@ -256,26 +308,40 @@ docker compose down -v
 ## Docker Compose Architecture
 
 ```
-                 Docker Network
+             Docker Network
 
-      +-------------------------------+
+       +----------------------+
 
-      PostgreSQL
-           ▲
-           │
-           │
- Spring Boot Application
+       PostgreSQL Container
+                ▲
+                │
+                │
+     Spring Boot Container
 
-      +-------------------------------+
+       +----------------------+
 ```
 
-Spring Boot automatically connects to PostgreSQL using
+Spring Boot connects to PostgreSQL using
 
 ```
 DB_HOST=postgres-db
 ```
 
-provided by Docker Compose.
+which is automatically resolved by Docker Compose.
+
+---
+
+# Docker Environment Variables
+
+Spring Boot uses the following variables:
+
+| Variable | Description |
+|----------|-------------|
+| DB_HOST | PostgreSQL host |
+| DB_PORT | PostgreSQL port |
+| DB_NAME | Database name |
+| DB_USER | Database username |
+| DB_PASSWORD | Database password |
 
 ---
 
@@ -285,15 +351,13 @@ The application uses
 
 - Spring Security
 - JWT Authentication
-- Stateless Authentication
-- Password Encryption using BCrypt
+- BCrypt Password Encoder
+- Stateless Sessions
 
-Protected APIs require the JWT token in the Authorization header.
-
-Example
+Example Authorization header
 
 ```
-Authorization: Bearer <JWT_TOKEN>
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9...
 ```
 
 ---
@@ -302,37 +366,54 @@ Authorization: Bearer <JWT_TOKEN>
 
 The application validates incoming requests using Jakarta Bean Validation.
 
-Examples include
+Examples
 
 - Required fields
 - Email validation
 - Password validation
+- Task validation
 
 ---
 
 # Exception Handling
 
-A global exception handler returns consistent error responses for:
+Global exception handling provides consistent API responses for
 
 - Validation errors
 - Authentication failures
+- Resource not found
 - Business exceptions
 - Unexpected server errors
 
 ---
 
+# Angular Frontend
+
+The Angular frontend for this project is available in a separate repository.
+
+It provides
+
+- User Registration
+- User Login
+- JWT Authentication
+- Task Dashboard
+- Task CRUD Operations
+- Responsive UI
+- Docker Support
+
+---
+
 # Future Improvements
 
-- Angular Frontend
 - Swagger / OpenAPI Documentation
-- Refresh Tokens
+- Refresh Token Authentication
 - Role Based Authorization
 - Pagination
 - Sorting
 - Search APIs
-- Unit & Integration Tests
 - Flyway Database Migration
-- CI/CD using GitHub Actions
+- Integration Tests using Testcontainers
+- GitHub Actions CI/CD
 - Kubernetes Deployment
 
 ---
@@ -345,8 +426,12 @@ GitHub
 
 https://github.com/shivamsingh76
 
+LinkedIn
+
+https://www.linkedin.com/in/shivamsingh76/
+
 ---
 
 # License
 
-This project is intended for learning and demonstration purposes.
+This project is developed for learning purposes and portfolio demonstration.
