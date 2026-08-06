@@ -16,3 +16,8 @@ spring:
   #JPA Settings
     hibernate:
       ddl-auto: update
+
+# CORS configuration
+app:
+  cors:
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:4200}
